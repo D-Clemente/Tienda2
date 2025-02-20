@@ -1,0 +1,361 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Nombre Tienda</title>
+    <link href="https://fonts.cdnfonts.com/css/destroy" rel="stylesheet">
+    <style>
+        /* Estilos mejorados */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            background: #ffffff;
+            font-family: 'Arial', sans-serif;
+        }
+
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 1rem 3rem;
+            background: white;
+            position: fixed;
+            width: 100%;
+            top: 0;
+            z-index: 1000;
+            border-bottom: 2px solid #000;
+        }
+
+        .logo {
+            font-family: 'Destroy', sans-serif;
+            font-size: 2.5rem;
+            letter-spacing: 3px;
+            color: #000;
+            text-transform: uppercase;
+            text-decoration: none;
+            line-height: 0.9;
+        }
+
+        .menu {
+            display: flex;
+            gap: 2rem;
+            align-items: center;
+        }
+
+        .menu-item {
+            cursor: pointer;
+            position: relative;
+            padding: 5px 0;
+            transition: all 0.3s;
+        }
+
+        /* Animación subrayado para todos los items */
+        .menu-item::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 0;
+            height: 2px;
+            background: #000;
+            transition: width 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        .menu-item:hover::after {
+            width: 100%;
+        }
+
+        .carrito-contador {
+            background: #ff0000;
+            color: white;
+            border-radius: 50%;
+            padding: 4px 10px;
+            font-size: 1rem;
+            margin-left: 5px;
+            display: inline-block;
+            transition: transform 0.2s;
+        }
+
+        .carrito-contador:hover {
+            transform: scale(1.1);
+        }
+
+        .productos-container {
+            margin-top: 120px;
+            padding: 0 3rem;
+        }
+
+        .producto-columna {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 2rem;
+        }
+
+        .producto {
+            position: relative;
+            overflow: hidden;
+            margin-bottom: 2rem;
+        }
+
+        .producto img {
+            width: 100%;
+            height: 600px;
+            object-fit: cover;
+            transition: transform 0.3s;
+        }
+
+        .btn-carrito {
+            position: absolute;
+            bottom: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: rgba(0,0,0,0.8);
+            color: white;
+            border: none;
+            padding: 1rem 2rem;
+            border-radius: 30px;
+            cursor: pointer;
+            opacity: 0;
+            transition: all 0.3s;
+            width: max-content;
+        }
+
+        .producto:hover .btn-carrito {
+            opacity: 1;
+        }
+
+        /* Overlay mejorado */
+        .carrito-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.5);
+            backdrop-filter: blur(5px);
+            display: none;
+            z-index: 2000;
+        }
+
+        /* Carrito con mejor diseño */
+        .carrito {
+            position: fixed;
+            top: 0;
+            right: -450px;
+            width: 450px;
+            height: 100%;
+            background: #fff;
+            padding: 2rem;
+            transition: right 0.3s ease;
+            z-index: 2001;
+            box-shadow: -5px 0 15px rgba(0,0,0,0.1);
+            display: flex;
+            flex-direction: column;
+        }
+
+        .carrito.visible {
+            right: 0;
+        }
+
+        .carrito h2 {
+            font-family: 'Destroy', sans-serif;
+            font-size: 2rem;
+            margin-bottom: 2rem;
+        }
+
+        #items-carrito {
+            flex-grow: 1;
+            overflow-y: auto;
+            padding-right: 1rem;
+        }
+
+        .item-carrito {
+            display: flex;
+            align-items: center;
+            gap: 1.5rem;
+            padding: 1rem;
+            margin-bottom: 1rem;
+            background: #f8f8f8;
+            border-radius: 10px;
+            transition: transform 0.3s;
+        }
+
+        .item-carrito:hover {
+            transform: translateX(5px);
+        }
+
+        .item-carrito img {
+            width: 80px;
+            height: 80px;
+            object-fit: cover;
+            border-radius: 5px;
+            border: 2px solid #000;
+        }
+
+        .item-carrito div {
+            flex-grow: 1;
+        }
+
+        .item-carrito p {
+            margin: 0.3rem 0;
+            font-size: 0.9rem;
+        }
+
+        .total {
+            font-size: 1.2rem;
+            font-weight: bold;
+            padding-top: 2rem;
+            border-top: 2px solid #000;
+            margin-top: auto;
+        }
+    </style>
+</head>
+<body>
+    <header class="header">
+        <a href="#" class="logo">NOMBRE<br>TIENDA</a>
+        <nav class="menu">
+            <div class="menu-item">Cuenta</div>
+            <div class="menu-item">Soporte</div>
+            <div class="menu-item" id="carrito-btn">
+                Carrito <span class="carrito-contador">0</span>
+            </div>
+        </nav>
+    </header>
+
+    <!-- ... (header igual que antes) ... -->
+
+<main class="productos-container">
+    <div class="producto-columna">
+        <!-- Producto 1 -->
+        <div class="producto">
+            <img src="img/ropa1.png" alt="Chaqueta Urbana">
+            <div class="producto-info">
+                <h3>CHAQUETA URBANA</h3>
+                <p>€699.99</p>
+            </div>
+            <button class="btn-carrito" 
+                    data-nombre="CHAQUETA URBANA" 
+                    data-precio="699.99">
+                Añadir al carrito
+            </button>
+        </div>
+
+        <!-- Producto 2 -->
+        <div class="producto">
+            <img src="img/ropa2.png" alt="Abrigo Premium">
+            <div class="producto-info">
+                <h3>ABRIGO PREMIUM</h3>
+                <p>€899.99</p>
+            </div>
+            <button class="btn-carrito" 
+                    data-nombre="ABRIGO PREMIUM" 
+                    data-precio="899.99">
+                Añadir al carrito
+            </button>
+        </div>
+
+        <!-- Producto 3 -->
+        <div class="producto">
+            <img src="img/ropa3.png" alt="Parka Urbana">
+            <div class="producto-info">
+                <h3>PARKA URBANA</h3>
+                <p>€799.99</p>
+            </div>
+            <button class="btn-carrito" 
+                    data-nombre="PARKA URBANA" 
+                    data-precio="799.99">
+                Añadir al carrito
+            </button>
+        </div>
+    </div>
+</main>
+        
+        <!-- Producto 3 -->
+        <div class="producto">
+            <img src="img/ropa4.png" alt="Sudadera Clemente">
+            <div class="producto-info">
+                <h3>PARKA URBANA</h3>
+                <p>€799.99</p>
+            </div>
+            <button class="btn-carrito" 
+                    data-nombre="Sudadera Clemente" 
+                    data-precio="89.99">
+                Añadir al carrito
+            </button>
+        </div>
+    </div>
+</main>
+
+    <!-- Carrito mejorado -->
+    <div class="carrito-overlay" id="overlay"></div>
+    <div class="carrito" id="carrito">
+        <h2>CARRITO</h2>
+        <div id="items-carrito"></div>
+        <p class="total">Total: €<span id="total">0.00</span></p>
+    </div>
+
+    <script>
+        // Código mejorado
+        let carrito = JSON.parse(localStorage.getItem('carrito')) || [];
+        const contador = document.querySelector('.carrito-contador');
+        
+        function actualizarCarrito() {
+            const itemsContainer = document.getElementById('items-carrito');
+            const totalElement = document.getElementById('total');
+            
+            itemsContainer.innerHTML = '';
+            let total = 0;
+            
+            carrito.forEach(item => {
+                total += Number(item.precio);
+                itemsContainer.innerHTML += `
+                    <div class="item-carrito">
+                        <img src="img/${item.nombre.replace(/ /g, '_')}.png" alt="${item.nombre}">
+                        <div>
+                            <p>${item.nombre}</p>
+                            <p>€${item.precio}</p>
+                        </div>
+                    </div>
+                `;
+            });
+            
+            totalElement.textContent = total.toFixed(2);
+            contador.textContent = carrito.length;
+            localStorage.setItem('carrito', JSON.stringify(carrito));
+        }
+
+        document.querySelectorAll('.btn-carrito').forEach(btn => {
+            btn.addEventListener('click', () => {
+                carrito.push({
+                    nombre: btn.dataset.nombre,
+                    precio: btn.dataset.precio
+                });
+                actualizarCarrito();
+            });
+        });
+
+        // Control del carrito
+        const carritoBtn = document.getElementById('carrito-btn');
+        const overlay = document.getElementById('overlay');
+        const carritoElement = document.getElementById('carrito');
+
+        carritoBtn.addEventListener('click', () => {
+            overlay.style.display = 'block';
+            carritoElement.classList.add('visible');
+        });
+
+        overlay.addEventListener('click', () => {
+            overlay.style.display = 'none';
+            carritoElement.classList.remove('visible');
+        });
+
+        // Inicializar
+        actualizarCarrito();
+    </script>
+</body>
+</html>

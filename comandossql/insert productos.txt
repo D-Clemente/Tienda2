@@ -1,0 +1,9 @@
+INSERT INTO productos (nombre, precio, descripcion, imagen, stock, imagenes_extra)
+VALUES (
+    'Abrigo Premium',
+    899.99,
+    'Abrigo de invierno de alta calidad...',
+    'abrigo_principal.webp',
+    50,
+    '["abrigo_2.webp", "abrigo_3.webp", "abrigo_4.webp"]'
+);
